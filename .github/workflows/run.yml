@@ -239,23 +239,23 @@ jobs:
           go run ./ geosite -f ../community/geosite-lite.dat -o ../sing-rule/geo-lite/geosite -t sing-box
           go run ./ geoip -f ../geoip-lite.dat -o ../sing-rule/geo-lite/geoip -t sing-box
 
-      - name: Convert geo to meta-rule-set
-        env:
-          NO_SKIP: true
-        run: |
-          mkdir -p meta-rule/geo/geosite && mkdir -p meta-rule/geo/geoip
-          cd convert
-          go run ./ geosite -f ../custom/publish/geosite.dat -o ../meta-rule/geo/geosite
-          go run ./ geoip -f ../geoip.dat -o ../meta-rule/geo/geoip
+      # - name: Convert geo to meta-rule-set
+      #   env:
+      #     NO_SKIP: true
+      #   run: |
+      #     mkdir -p meta-rule/geo/geosite && mkdir -p meta-rule/geo/geoip
+      #     cd convert
+      #     go run ./ geosite -f ../custom/publish/geosite.dat -o ../meta-rule/geo/geosite
+      #     go run ./ geoip -f ../geoip.dat -o ../meta-rule/geo/geoip
 
-      - name: Convert geo-lite to meta-rule-set
-        env:
-          NO_SKIP: true
-        run: |
-          mkdir -p meta-rule/geo-lite/geosite && mkdir -p meta-rule/geo-lite/geoip
-          cd convert
-          go run ./ geosite -f ../community/geosite-lite.dat -o ../meta-rule/geo-lite/geosite
-          go run ./ geoip -f ../geoip-lite.dat -o ../meta-rule/geo-lite/geoip
+      # - name: Convert geo-lite to meta-rule-set
+      #   env:
+      #     NO_SKIP: true
+      #   run: |
+      #     mkdir -p meta-rule/geo-lite/geosite && mkdir -p meta-rule/geo-lite/geoip
+      #     cd convert
+      #     go run ./ geosite -f ../community/geosite-lite.dat -o ../meta-rule/geo-lite/geosite
+      #     go run ./ geoip -f ../geoip-lite.dat -o ../meta-rule/geo-lite/geoip
 
       - name: Convert asn
         env:
@@ -313,7 +313,7 @@ jobs:
       - name: Delete current release assets
         uses: andreaswilli/delete-release-assets-action@v3.0.0
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.REPO_TOKEN }}
           tag: latest
           deleteOnlyFromDrafts: false
 
@@ -321,7 +321,7 @@ jobs:
         id: upload_release
         uses: svenstaro/upload-release-action@v2
         with:
-          repo_token: ${{ secrets.GITHUB_TOKEN }}
+          repo_token: ${{ secrets.REPO_TOKEN }}
           release_name: Release ${{ env.BUILDTIME }}
           tag: latest
           file_glob: true
@@ -337,7 +337,7 @@ jobs:
           git checkout -b release
           git add .
           git commit -m "Released on ${{ env.BUILDTIME }}"
-          git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+          git remote add origin "https://${{ github.actor }}:${{ secrets.REPO_TOKEN }}@github.com/${{ github.repository }}"
           git push -f -u origin release
 
       - name: Git push assets to "sing-rule" branch
@@ -349,20 +349,20 @@ jobs:
             git checkout -b sing
             git add .
             git commit -m "Released on ${{ env.BUILDTIME }}"
-            git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
+            git remote add origin "https://${{ github.actor }}:${{ secrets.REPO_TOKEN }}@github.com/${{ github.repository }}"
             git push -f -u origin sing
 
-      - name: Git push assets to "meta-rule" branch
-        run: |
-            cd meta-rule || exit 1
-            git init
-            git config --local user.name "github-actions[bot]"
-            git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git checkout -b meta
-            git add .
-            git commit -m "Released on ${{ env.BUILDTIME }}"
-            git remote add origin "https://${{ github.actor }}:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}"
-            git push -f -u origin meta
+      # - name: Git push assets to "meta-rule" branch
+      #   run: |
+      #       cd meta-rule || exit 1
+      #       git init
+      #       git config --local user.name "github-actions[bot]"
+      #       git config --local user.email "41898282+github-actions[bot]@users.noreply.github.com"
+      #       git checkout -b meta
+      #       git add .
+      #       git commit -m "Released on ${{ env.BUILDTIME }}"
+      #       git remote add origin "https://${{ github.actor }}:${{ secrets.REPO_TOKEN }}@github.com/${{ github.repository }}"
+      #       git push -f -u origin meta
 
 
       - name: Purge jsdelivr CDN
